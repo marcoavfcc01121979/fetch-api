@@ -1,0 +1,125 @@
+nesse inicio vamos criar um array para carregar os dados automaticos
+dentro de clientes.js.
+
+const informacoesCliente = [
+  {
+    cpf: '12345678901',
+    nome: 'Marco'
+  }
+]
+
+vamos colocar esses dados dentro da tabela no html.
+modelo manual
+
+const informacoesCliente = [
+  {
+    cpf: '12345678901',
+    nome: 'Marco'
+  }
+]
+
+const conteudoLinha = `
+  <tr>
+    <td>${informacoesCliente[0].cpf}</td>
+    <td>${informacoesCliente[0].nome}</td>
+  </tr>
+`
+
+const corpoTabela = document.querySelector("[data-conteudo-tabela]")
+
+corpoTabela.innerHTML = conteudoLinha;
+
+
+vamos colocar esses dados dentro da tabela no html usando o 
+forEach ou seja trabalhando com multiplos cliente.
+
+agora nesse momento vamos consumir os dados da api do pet-shop 
+vamos apagar o array que estavamos usando.
+
+vamos ultilizar o fetch
+fetch('http://localhost:4000/clientes')
+
+se termos um console.log podemos ver que recebemos uma promisse
+agora podemos atraves do then ultilizar resolve trabalhar no resolve
+fetch('http://localhost:4000/clientes')
+  .then( resposta => {
+    console.log(resposta.json())
+  })
+
+agora vamos fazer o then transformar a resposta em um json.
+fetch('http://localhost:4000/clientes')
+  .then( resposta => {
+    return resposta.json()
+  })
+  .then( json => {
+    console.log(json) 
+  })
+
+vamos criar uma pasta chamada api e depois vou criar um arquivo chamado
+cliente.js para que toda comunicação seja feita dentro dessa pasta.
+fetch('http://localhost:4000/clientes')
+  .then( resposta => {
+    return resposta.json()
+  })
+  .then( json => {
+    console.log(json) 
+  })
+
+agora preciso importar o arquivo cliente.js dentro da pasta html.
+
+agora dentro de cliente.js vou criar uma funcao capaz de exibir os dados 
+api dentro do html.
+
+listarClientes = () => {
+  return fetch('http://localhost:4000/clientes')
+  .then( resposta => {
+    return resposta.json()
+  })
+  .then( json => {
+    return json 
+  })
+}
+
+agora vou para o arquivo listagemCliente.js o arquivo estava dessa forma
+
+//console.log(fetch('http://localhost:4000/clientes'));
+const corpoTabela = document.querySelector("[data-conteudo-tabela]")
+
+const exibeCliente = (cpf, nome) => {
+  const linha = document.createElement('tr');
+
+  const conteudoLinha = `
+      <td>${cpf}</td>
+      <td>${nome}</td>
+  `
+  linha.innerHTML = conteudoLinha;
+  return linha;
+}
+/*
+informacoesCliente.forEach(indice => {
+  corpoTabela.appendChild(exibeCliente(indice.cpf, indice.nome))
+})*/
+
+O arquivo de listagemCliente atualizado ficou assim
+
+//console.log(fetch('http://localhost:4000/clientes'));
+const corpoTabela = document.querySelector("[data-conteudo-tabela]")
+
+const exibeCliente = (cpf, nome) => {
+  const linha = document.createElement('tr');
+
+  const conteudoLinha = `
+      <td>${cpf}</td>
+      <td>${nome}</td>
+  `
+  linha.innerHTML = conteudoLinha;
+  return linha;
+}
+/*
+listarClientes().then(exibe => {
+  exibe.forEach(indice => {
+    corpoTabela.appendChild(exibeCliente(indice.cpf, indice.nome))
+  })
+})*/
+
+dentro do html o script da api tem que vim primeiro.
