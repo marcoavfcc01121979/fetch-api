@@ -123,3 +123,109 @@ listarClientes().then(exibe => {
 })*/
 
 dentro do html o script da api tem que vim primeiro.
+
+agora dentro de api/cliente vou criar o metodo cadastrarCliente
+
+const cadastrarClientes = (nome, cpf) => {
+  const Json = JSON.stringify({
+    nome: nome,
+    cpf: cpf
+  })
+  return fetch('http://localhost:4000/clientes/clientes', {
+    method: 'POST',
+    headers: {
+      'Content-type': 'application/json'
+    },
+    body: Json
+  })
+  .then(res => {
+    return res.body
+  })
+    
+}
+
+agora vou criar um arquivo javascript cadastro-cliente.js que cria um evento para pegar os dados 
+do formulario para q possa ser cadastrado no banco de dados.
+
+ const formCadastroCliente = document.querySelector('[data-form]')
+//console.log(formCadastroCliente)
+
+
+formCadastroCliente.addEventListener("submit", event => {
+  event.preventDefault()
+
+  const nome = event.target.querySelector('[data-nome]')
+  const cpf = event.target.querySelector('[data-cpf]')
+
+  cadastrarClientes(nome.value, cpf.value); 
+})
+
+
+agora vamos criar um arquivo que faz a validação do cpf
+validaCpf.js
+
+const verificaCpfInvalido = (cpf) => {
+  const cpfsInvalido = [
+    '11111111111',
+    '22222222222',
+    '33333333333',
+    '44444444444',
+    '55555555555',
+    '66666666666',
+    '77777777777',
+    '88888888888',
+    '99999999999',
+    '00000000000'
+  ]
+  return cpfsInvalido.indexOf(cpf) === -1
+}
+
+const somaNumerosCpf = (cpf, totalDeDigitos, peso) => {
+  let soma = 0
+  for(let i = 1; i <= totalDeDigitos; i++) {
+    soma += parseInt(cpf.substring(i - 1, i)) * ( peso - i )   
+  }
+  return soma;
+}
+
+const verificaDigito = (cpf, totalDeDigitos, peso, digitoDeVerificacao) => {
+  const soma = somaNumerosCpf(cpf, totalDeDigitos, peso)
+  const resto = (soma * 10) % 11
+  return resto === digitoDeVerificacao
+}
+
+const verificaPrimeiroDigito = (cpf) => {
+  const peso = 11
+  const totalDeDigitosPrimeiraParte = 9
+  const digitoDeVerificacao = parseInt(cpf.substring(9, 10))
+
+  return verificaDigito(
+    cpf,
+    totalDeDigitosPrimeiraParte,
+    peso,
+    digitoDeVerificacao
+  )
+}
+
+const verificaSegundoDigito = (cpf) => {
+  const peso = 12
+  const totalDeDigitosSegundaParte = 10
+  const digitoDeVerificacao = parseInt(cpf.substring(10, 11))
+
+  return verificaDigito(
+    cpf,
+    totalDeDigitosSegundaParte,
+    peso,
+    digitoDeVerificacao
+  )
+}
+
+const validaCPF = (cpf) => {
+  return(
+    verificaPrimeiroDigito(cpf)&&
+    verificaSegundoDigito(cpf)&&
+    verificaCpfInvalido(cpf)
+  )
+}
+
+agora no cadastro-clientes.js vamos fazer a verificação
